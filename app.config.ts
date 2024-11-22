@@ -1,4 +1,4 @@
-import 'dotenv/config';  // dotenv 라이브러리로 .env 파일을 불러옵니다.
+import 'dotenv/config';
 
 export default {
   expo: {
@@ -17,7 +17,7 @@ export default {
     ios: {
       supportsTablet: true,
       infoPlist: {
-        NSMicrophoneUsageDescription: "앱에서 마이크를 사용하여 음성 인식을 합니다."  // iOS에서 마이크 권한 요청
+        NSMicrophoneUsageDescription: "앱에서 마이크를 사용하여 음성 인식을 합니다." 
       }
     },
     android: {
@@ -25,15 +25,15 @@ export default {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff"
       },
-      permissions: ["RECORD_AUDIO"],  // Android에서 마이크 권한 요청
-      useBridgeless: false  // Bridgeless 모드 비활성화
+      permissions: ["RECORD_AUDIO"], 
+      useBridgeless: false
     },
-    platforms: ["ios", "android"],  // "web" 제거 (웹을 사용하지 않을 경우)
+    platforms: ["ios", "android"], 
     extra: {
-      API_BASE_URL: process.env.API_BASE_URL || "https://eartalk.site:17004"  // .env 파일에서 불러오기
+      API_BASE_URL: process.env.API_BASE_URL || "https://eartalk.site:17004"
     },
     "experimental": {
-      "useBridgeless": false  // 이 부분을 추가해 보세요
+      "useBridgeless": false 
     }
   }
 };

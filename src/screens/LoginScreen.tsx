@@ -21,7 +21,7 @@ const LoginScreen = ({ navigation }: any) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username: email,  // 로그인 API에서 email을 username으로 처리할 수 있음
+          username: email,  //username으로 시도해보기
           password: password,
         }),
       });
