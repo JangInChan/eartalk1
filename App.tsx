@@ -56,14 +56,14 @@ const App = () => {
         <Stack.Screen
           name="UserInfo"
           component={UserInfoScreen}
-          options={{title: '내 정보'}}
+          options={{ title: '내 정보' }}
         />
 
         {/* 비밀번호 찾기 화면 */}
         <Stack.Screen
           name="ResetPassword"
           component={ResetPasswordScreen}
-          options={{title: '비밀번호 찾기'}}
+          options={{ title: '비밀번호 찾기' }}
         />
 
         {/* 메뉴 화면 */}
@@ -100,7 +100,12 @@ const MenuScreen = ({ navigation }: any) => {
       await AsyncStorage.removeItem('access_token');
       setIsLoggedIn(false); // 로그아웃 후 로그인 상태 업데이트
       Alert.alert('로그아웃', '로그아웃 되었습니다.');
-      navigation.navigate('Login'); // 로그인 화면으로 이동
+
+      // 네비게이션 스택 초기화하여 메인 화면으로만 이동
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }], // 메인 화면으로만 이동
+      });
     } catch (error) {
       console.error('로그아웃 오류:', error);
       Alert.alert('오류', '로그아웃 중 문제가 발생했습니다.');

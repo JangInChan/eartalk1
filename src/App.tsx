@@ -1,18 +1,27 @@
-import React, { useState, useEffect } from 'react'; 
-import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, Button, Text, StyleSheet, Alert, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native';
 import { Audio } from 'expo-av';
 import * as Speech from 'expo-speech';
-import { config } from './config'; // config 파일에서 import
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { config } from './config';
 
 const App = () => {
-  const [text, setText] = useState(''); // 텍스트 입력
+  const [text, setText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [status, setStatus] = useState('');
-  const [identifier, setIdentifier] = useState<string | null>(null);
-  const [soundUri, setSoundUri] = useState<string | null>(null); // 재생될 오디오 URI
+  const [soundUri, setSoundUri] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
+    const checkLoginStatus = async () => {
+      const token = await AsyncStorage.getItem('access_token');
+      if (token) {
+        setIsLoggedIn(true);
+      }
+    };
+    checkLoginStatus();
+
     (async () => {
       const { status } = await Audio.requestPermissionsAsync();
       if (status !== 'granted') {
@@ -21,15 +30,17 @@ const App = () => {
     })();
   }, []);
 
-  // 음성 녹음 시작
   const startRecording = async () => {
+    if (isLoggedIn) {
+      Alert.alert('로그인 상태에서는 텍스트 입력이 가능합니다.');
+    }
+
     try {
       setStatus('녹음 준비 중...');
-          // 오디오 모드 설정
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: true, // iOS에서 녹음 허용
-      playsInSilentModeIOS: true, // iOS에서 무음 모드에서도 작동
-    });
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
       const { recording } = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY
       );
@@ -53,7 +64,7 @@ const App = () => {
       const uri = recording.getURI();
       if (uri) {
         console.log('녹음 파일 경로:', uri);
-        await uploadAudio(uri); // 서버로 음성 파일 업로드
+        await uploadAudio(uri);
         setStatus('녹음 완료 및 업로드 중...');
       } else {
         setStatus('녹음된 파일을 찾을 수 없습니다.');
@@ -64,10 +75,9 @@ const App = () => {
     }
   };
 
-  // 텍스트 음성 출력
   const speakText = () => {
     if (text.trim()) {
-      Speech.speak(text); 
+      Speech.speak(text);
     } else {
       Alert.alert('텍스트 없음', '읽을 텍스트를 입력해주세요.');
     }
@@ -77,71 +87,41 @@ const App = () => {
     try {
       setStatus('파일 업로드 중...');
       const formData = new FormData();
-  
+
       formData.append('audio', {
-        uri: uri, // 파일 URI
-        name: 'recording.wav', // 파일 이름
-        type: 'audio/wav', // 파일의 MIME 타입
+        uri: uri,
+        name: 'recording.wav',
+        type: 'audio/wav',
       });
-  
+
       const response = await fetch(`${config.API_BASE_URL}/api/audio`, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          Authorization: `Bearer ${config.API_TOKEN}`, // 필요 시 인증 토큰
+          Authorization: `Bearer ${config.API_TOKEN}`,
           'Content-Type': 'multipart/form-data',
         },
         body: formData,
       });
-  
+
       if (!response.ok) {
-        const errorResponse = await response.text(); 
+        const errorResponse = await response.text();
         console.error(`API 요청 실패: ${response.status} - ${response.statusText}`);
-        console.error('백엔드 응답:', errorResponse); 
+        console.error('백엔드 응답:', errorResponse);
         Alert.alert('오류', `API 요청 실패: ${response.status} - ${errorResponse}`);
         return;
       }
-  
-      const data = await response.json(); 
-      const newIdentifier = data.identifier; // 서버 응답에서 identifier 추출
-      setIdentifier(newIdentifier);
-      console.log('받은 identifier:', newIdentifier);
+
+      const data = await response.json();
+      setText(data.text);
+      setSoundUri(data.audioUrl);
       setStatus('파일 업로드 완료');
-  
-      await fetchAudioFile(newIdentifier); // 변환된 음성 파일을 가져오기
     } catch (error) {
       console.error('파일 업로드 실패:', error);
       setStatus('파일 업로드 실패');
     }
   };
 
-  const fetchAudioFile = async (identifier: string) => {
-    try {
-      setStatus('오디오 파일 로딩 중...');
-      const response = await fetch(`${config.API_BASE_URL}/api/audio/${identifier}`, {
-        method: 'GET',
-        headers: config.headers,
-      });
-  
-      if (!response.ok) {
-        const errorResponse = await response.text(); 
-        console.error(`API 요청 실패: ${response.status} - ${response.statusText}`);
-        console.error('백엔드 응답:', errorResponse); 
-        Alert.alert('오류', `API 요청 실패: ${response.status} - ${errorResponse}`);
-        throw new Error(`API 요청 실패: ${response.status}`);
-      }
-  
-      const data = await response.json();
-      setText(data.text); // 받아온 텍스트를 텍스트 입력란에 표시
-      setSoundUri(data.audioUrl); // 오디오 URL 저장
-      setStatus('오디오 파일 로딩 완료');
-    } catch (error) {
-      console.error('오디오 파일 로딩 실패:', error);
-      setStatus('오디오 파일 로딩 실패');
-    }
-  };
-
-  // 오디오 재생
   const playAudio = async () => {
     if (!soundUri) {
       Alert.alert('오디오 없음', '재생할 오디오 파일이 없습니다.');
@@ -161,22 +141,46 @@ const App = () => {
     }
   };
 
+  // 키보드 숨기기 함수
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
+  // 화면 크기 가져오기
+  const screenHeight = Dimensions.get('window').height;
+  const screenWidth = Dimensions.get('window').width;
+
   return (
-    <View style={styles.container}>
-      <TextInput
-        value={text}
-        onChangeText={setText}
-        placeholder="여기에 텍스트를 입력하세요"
-        style={styles.textInput}
-      />
-      <View style={styles.buttonsContainer}>
-        <Button title="음성 녹음 시작" onPress={startRecording} disabled={isRecording} />
-        <Button title="음성 녹음 종료" onPress={stopRecording} disabled={!isRecording} />
-        <Button title="텍스트 읽기" onPress={speakText} />
-        <Button title="오디오 재생" onPress={playAudio} disabled={!soundUri} />
-      </View>
-      <Text style={styles.status}>{status}</Text>
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined} // iOS에서 키보드 처리
+      style={{ flex: 1 }}
+    >
+      <TouchableWithoutFeedback onPress={dismissKeyboard}> 
+        <View style={{ flex: 1 }}>
+          <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <TextInput
+                value={text}
+                onChangeText={setText}
+                placeholder="여기에 텍스트를 입력하세요"
+                style={[styles.textInput, { height: screenHeight * 0.5, width: screenWidth * 0.9, opacity: isLoggedIn ? 1 : 0.5 }]}  // 화면 높이 50%, 너비 90%로 설정
+                editable={isLoggedIn}
+                multiline={true}
+                numberOfLines={4}
+                textAlignVertical="top"
+              />
+              <View style={styles.buttonsContainer}>
+                <Button title="음성 녹음 시작" onPress={startRecording} disabled={isRecording} />
+                <Button title="음성 녹음 종료" onPress={stopRecording} disabled={!isRecording} />
+                <Button title="텍스트 읽기" onPress={speakText} />
+                <Button title="오디오 재생" onPress={playAudio} disabled={!soundUri} />
+              </View>
+              <Text style={styles.status}>{status}</Text>
+            </View>
+          </ScrollView>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -188,11 +192,10 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   textInput: {
-    width: '100%',
     padding: 10,
     borderWidth: 1,
-    marginBottom: 20,
     borderRadius: 5,
+    marginBottom: 20,
   },
   buttonsContainer: {
     width: '100%',
@@ -206,8 +209,6 @@ const styles = StyleSheet.create({
 });
 
 export default App;
-
-
 
 //잘 작동 음성파일 텍스트 변환기능 X
 /* import React, { useState, useEffect } from 'react'; 
