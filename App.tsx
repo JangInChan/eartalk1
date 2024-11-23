@@ -7,6 +7,7 @@ import HomeScreen from './src/App'; // 기존 App 파일에서 메인 화면
 import SignUpScreen from './src/screens/SignUpScreen'; // 회원가입 화면
 import LoginScreen from './src/screens/LoginScreen'; // 로그인 화면
 import UpdatePasswordScreen from './src/screens/UpdatePasswordScreen'; // 비밀번호 변경 화면
+import UserInfoScreen from './src/screens/UserInfoScreen'; // 내 정보 화면
 
 const Stack = createStackNavigator();
 
@@ -50,6 +51,13 @@ const App = () => {
           options={{ title: '비밀번호 변경' }}
         />
 
+        {/* 내 정보 화면 */}
+        <Stack.Screen
+          name="UserInfo"
+          component={UserInfoScreen}
+          options={{title: '내 정보'}}
+        />
+        
         {/* 메뉴 화면 */}
         <Stack.Screen
           name="Menu"
