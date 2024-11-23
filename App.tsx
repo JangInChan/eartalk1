@@ -22,6 +22,7 @@ const App = () => {
           component={HomeScreen}
           options={({ navigation }) => ({
             title: '메인 화면',
+            headerLeft: () => null,  // 왼쪽 상단 아무것도 안 뜨게 설정
             headerRight: () => (
               <Button
                 title="메뉴"
