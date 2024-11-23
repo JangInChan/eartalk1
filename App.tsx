@@ -7,6 +7,7 @@ import HomeScreen from './src/App'; // 기존 App 파일에서 메인 화면
 import SignUpScreen from './src/screens/SignUpScreen'; // 회원가입 화면
 import LoginScreen from './src/screens/LoginScreen'; // 로그인 화면
 import UpdatePasswordScreen from './src/screens/UpdatePasswordScreen'; // 비밀번호 변경 화면
+import ResetPasswordScreen from './src/screens/ResetPasswordScreen'; // 비밀번호 찾기 화면
 import UserInfoScreen from './src/screens/UserInfoScreen'; // 내 정보 화면
 
 const Stack = createStackNavigator();
@@ -57,7 +58,14 @@ const App = () => {
           component={UserInfoScreen}
           options={{title: '내 정보'}}
         />
-        
+
+        {/* 비밀번호 찾기 화면 */}
+        <Stack.Screen
+          name="ResetPassword"
+          component={ResetPasswordScreen}
+          options={{title: '비밀번호 찾기'}}
+        />
+
         {/* 메뉴 화면 */}
         <Stack.Screen
           name="Menu"
@@ -111,6 +119,7 @@ const MenuScreen = ({ navigation }: any) => {
         <>
           <Button title="회원가입" onPress={() => navigation.navigate('SignUp')} />
           <Button title="로그인" onPress={() => navigation.navigate('Login')} />
+          <Button title="비밀번호 찾기" onPress={() => navigation.navigate('ResetPassword')} />
         </>
       )}
     </View>
