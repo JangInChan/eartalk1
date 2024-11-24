@@ -4,6 +4,7 @@ import { Audio } from 'expo-av';
 import * as Speech from 'expo-speech';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { config } from './config';
+import { useFonts } from 'expo-font'; // expo-font 사용
 
 const App = () => {
   const [text, setText] = useState('');
@@ -13,6 +14,11 @@ const App = () => {
   const [soundUri, setSoundUri] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [apiToken, setApiToken] = useState<string | null>(null); // 동적으로 설정될 토큰
+
+  // 폰트 로딩
+  const [fontsLoaded] = useFonts({
+    'KCC-Hanbit': require('../assets/font/KCC-Hanbit.ttf'),
+  });
 
   useEffect(() => {
     const loadTokenAndCheckLoginStatus = async () => {
@@ -32,6 +38,14 @@ const App = () => {
       }
     })();
   }, []);
+
+  if (!fontsLoaded) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>폰트를 로딩 중...</Text>
+      </View>
+    );
+  }
 
   const startRecording = async () => {
     if (isLoggedIn) {
@@ -202,6 +216,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 20,
+    fontFamily: 'KCC-Hanbit',
   },
   buttonsContainer: {
     width: '100%',
@@ -211,6 +226,17 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: 'gray',
     fontSize: 16,
+    fontFamily: 'KCC-Hanbit'
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 18,
+    color: 'gray',
+    fontFamily: 'KCC-Hanbit',
   },
 });
 
