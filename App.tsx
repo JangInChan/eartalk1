@@ -8,7 +8,10 @@ import SignUpScreen from './src/screens/SignUpScreen'; // 회원가입 화면
 import LoginScreen from './src/screens/LoginScreen'; // 로그인 화면
 import UpdatePasswordScreen from './src/screens/UpdatePasswordScreen'; // 비밀번호 변경 화면
 import ResetPasswordScreen from './src/screens/ResetPasswordScreen'; // 비밀번호 찾기 화면
+import AudioList from './src/screens/RecordingListScreen'; // 녹음 내역 화면
 import UserInfoScreen from './src/screens/UserInfoScreen'; // 내 정보 화면
+import AudioListScreen from './src/screens/RecordingListScreen';
+import RecordingListScreen from './src/screens/RecordingListScreen';
 
 const Stack = createStackNavigator();
 
@@ -67,6 +70,13 @@ const App = () => {
           options={{ title: '비밀번호 찾기' }}
         />
 
+        {/* 녹음 기록 화면 */}
+        <Stack.Screen
+          name="RecordingList"
+          component={RecordingListScreen}
+          options={{title: '녹음 기록' }}
+        />
+
         {/* 메뉴 화면 */}
         <Stack.Screen
           name="Menu"
@@ -118,6 +128,7 @@ const MenuScreen = ({ navigation }: any) => {
       {isLoggedIn ? (
         <>
           <Button title="내 정보" onPress={() => navigation.navigate('UserInfo')} />
+          <Button title="녹음 기록" onPress={() => navigation.navigate('RecordingList')} />
           <Button title="비밀번호 변경" onPress={() => navigation.navigate('UpdatePassword')} />
           <Button title="로그아웃" onPress={handleLogout} />
         </>

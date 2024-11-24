@@ -12,15 +12,18 @@ const App = () => {
   const [status, setStatus] = useState('');
   const [soundUri, setSoundUri] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [apiToken, setApiToken] = useState<string | null>(null); // 동적으로 설정될 토큰
 
   useEffect(() => {
-    const checkLoginStatus = async () => {
+    const loadTokenAndCheckLoginStatus = async () => {
       const token = await AsyncStorage.getItem('access_token');
       if (token) {
         setIsLoggedIn(true);
+        setApiToken(token); // 토큰 저장
       }
     };
-    checkLoginStatus();
+
+    loadTokenAndCheckLoginStatus();
 
     (async () => {
       const { status } = await Audio.requestPermissionsAsync();
@@ -85,6 +88,11 @@ const App = () => {
 
   const uploadAudio = async (uri: string) => {
     try {
+      if (!apiToken) {
+        Alert.alert('토큰 없음', '로그인 후 다시 시도해주세요.');
+        return;
+      }
+
       setStatus('파일 업로드 중...');
       const formData = new FormData();
 
@@ -98,7 +106,7 @@ const App = () => {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          Authorization: `Bearer ${config.API_TOKEN}`,
+          Authorization: `Bearer ${apiToken}`, // 동적으로 설정된 토큰 사용
           'Content-Type': 'multipart/form-data',
         },
         body: formData,
@@ -141,21 +149,19 @@ const App = () => {
     }
   };
 
-  // 키보드 숨기기 함수
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
 
-  // 화면 크기 가져오기
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width;
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined} // iOS에서 키보드 처리
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={{ flex: 1 }}
     >
-      <TouchableWithoutFeedback onPress={dismissKeyboard}> 
+      <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={{ flex: 1 }}>
           <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -163,7 +169,7 @@ const App = () => {
                 value={text}
                 onChangeText={setText}
                 placeholder="여기에 텍스트를 입력하세요"
-                style={[styles.textInput, { height: screenHeight * 0.5, width: screenWidth * 0.9, opacity: isLoggedIn ? 1 : 0.5 }]}  // 화면 높이 50%, 너비 90%로 설정
+                style={[styles.textInput, { height: screenHeight * 0.5, width: screenWidth * 0.9, opacity: isLoggedIn ? 1 : 0.5 }]}
                 editable={isLoggedIn}
                 multiline={true}
                 numberOfLines={4}
