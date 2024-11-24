@@ -8,6 +8,7 @@ import SignUpScreen from './src/screens/SignUpScreen'; // 회원가입 화면
 import LoginScreen from './src/screens/LoginScreen'; // 로그인 화면
 import UpdatePasswordScreen from './src/screens/UpdatePasswordScreen'; // 비밀번호 변경 화면
 import ResetPasswordScreen from './src/screens/ResetPasswordScreen'; // 비밀번호 찾기 화면
+import DeleteAccountScreen from './src/screens/DeleteAccountScreen';
 import AudioList from './src/screens/RecordingListScreen'; // 녹음 내역 화면
 import UserInfoScreen from './src/screens/UserInfoScreen'; // 내 정보 화면
 import AudioListScreen from './src/screens/RecordingListScreen';
@@ -70,6 +71,13 @@ const App = () => {
           options={{ title: '비밀번호 찾기' }}
         />
 
+        {/* 회원탈퇴 화면 */}
+        <Stack.Screen
+          name="DeleteAccount"
+          component={DeleteAccountScreen}
+          options={{ title: '회원탈퇴' }}
+        />
+
         {/* 녹음 기록 화면 */}
         <Stack.Screen
           name="RecordingList"
@@ -130,6 +138,7 @@ const MenuScreen = ({ navigation }: any) => {
           <Button title="내 정보" onPress={() => navigation.navigate('UserInfo')} />
           <Button title="녹음 기록" onPress={() => navigation.navigate('RecordingList')} />
           <Button title="비밀번호 변경" onPress={() => navigation.navigate('UpdatePassword')} />
+          <Button title="회원탈퇴" onPress={() => navigation.navigate('DeleteAccount')} />
           <Button title="로그아웃" onPress={handleLogout} />
         </>
       ) : (
