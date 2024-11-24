@@ -48,10 +48,6 @@ const App = () => {
   }
 
   const startRecording = async () => {
-    if (isLoggedIn) {
-      Alert.alert('로그인 상태에서는 텍스트 입력이 가능합니다.');
-    }
-
     try {
       setStatus('녹음 준비 중...');
       await Audio.setAudioModeAsync({
@@ -188,6 +184,11 @@ const App = () => {
                 multiline={true}
                 numberOfLines={4}
                 textAlignVertical="top"
+                onFocus={() => {
+                  if (!isLoggedIn) {
+                    Alert.alert('로그인 필요', '텍스트 입력은 로그인 후에 가능합니다.');
+                  }
+                }}
               />
               <View style={styles.buttonsContainer}>
                 <Button title="음성 녹음 시작" onPress={startRecording} disabled={isRecording} />
