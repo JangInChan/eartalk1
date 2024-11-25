@@ -62,7 +62,7 @@ const App = () => {
           name="Home"
           component={HomeScreen}
           options={({ navigation }) => ({
-            title: '메인 화면',
+            title: 'EarTalk',
             headerLeft: () => null,
             headerRight: () => (
               <TouchableOpacity
