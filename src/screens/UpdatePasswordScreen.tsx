@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
+    fontFamily: 'KCC-Hanbit',
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,

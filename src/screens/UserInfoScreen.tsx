@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   infoText: {
+    fontFamily: 'KCC-Hanbit',
     fontSize: 18,
     marginVertical: 10,
   },

@@ -212,6 +212,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
+    fontFamily: 'KCC-Hanbit',
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',

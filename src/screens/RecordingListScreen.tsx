@@ -91,11 +91,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   loadingText: {
+    fontFamily: 'KCC-Hanbit',
     textAlign: 'center',
     fontSize: 18,
     color: 'gray',
   },
   emptyText: {
+    fontFamily: 'KCC-Hanbit',
     textAlign: 'center',
     fontSize: 16,
     color: 'red',
@@ -108,6 +110,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   recordingText: {
+    fontFamily: 'KCC-Hanbit',
     fontSize: 14,
     marginVertical: 2,
   },
