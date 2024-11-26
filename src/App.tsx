@@ -63,6 +63,7 @@ const App = () => {
     } catch (error) {
       console.error('녹음 실패:', error);
       setStatus('녹음 실패');
+      setTimeout(() => setStatus(''), 2000); 
     }
   };
 
@@ -85,16 +86,26 @@ const App = () => {
     } catch (error) {
       console.error('녹음 종료 실패:', error);
       setStatus('녹음 종료 실패');
+    } finally {
+      setTimeout(() => setStatus(''), 2000);
     }
   };
 
   const speakText = () => {
     if (text.trim()) {
-      Speech.speak(text);
+      try {
+        setStatus('텍스트 음성 변환 중...');
+        Speech.speak(text, {
+          onDone: () => setTimeout(() => setStatus(''), 2000),
+        });
+      } catch (error) {
+        console.error('음성 변환 중 오류 발생:', error);
+        setStatus('텍스트 음성 변환 실패');
+      }
     } else {
       Alert.alert('텍스트 없음', '읽을 텍스트를 입력해주세요.');
     }
-  };
+  };  
 
   const uploadAudio = async (uri: string) => {
     try {
@@ -116,7 +127,7 @@ const App = () => {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          Authorization: `Bearer ${apiToken}`, // 동적으로 설정된 토큰 사용
+          Authorization: `Bearer ${apiToken}`,
           'Content-Type': 'multipart/form-data',
         },
         body: formData,
@@ -137,6 +148,8 @@ const App = () => {
     } catch (error) {
       console.error('파일 업로드 실패:', error);
       setStatus('파일 업로드 실패');
+    } finally {
+      setTimeout(() => setStatus(''), 2000); 
     }
   };
 
@@ -147,15 +160,17 @@ const App = () => {
     }
 
     try {
+      setStatus('오디오 재생 중...');
       const { sound } = await Audio.Sound.createAsync(
         { uri: soundUri },
         { shouldPlay: true }
       );
       await sound.playAsync();
-      setStatus('오디오 재생 중...');
     } catch (error) {
       console.error('오디오 재생 실패:', error);
       setStatus('오디오 재생 실패');
+    } finally {
+      setTimeout(() => setStatus(''), 2000);
     }
   };
 
@@ -173,26 +188,56 @@ const App = () => {
     >
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={{ flex: 1 }}>
-          <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
               <TextInput
                 value={text}
                 onChangeText={setText}
                 placeholder="여기에 텍스트를 입력하세요"
-                style={[styles.textInput, { height: screenHeight * 0.5, width: screenWidth * 0.9, opacity: isLoggedIn ? 1 : 0.5 }]}
+                style={[
+                  styles.textInput,
+                  {
+                    height: screenHeight * 0.5,
+                    width: screenWidth * 0.9,
+                    opacity: isLoggedIn ? 1 : 0.5,
+                  },
+                ]}
                 editable={isLoggedIn}
                 multiline={true}
                 numberOfLines={4}
                 textAlignVertical="top"
                 onFocus={() => {
                   if (!isLoggedIn) {
-                    Alert.alert('로그인 필요', '텍스트 입력은 로그인 후에 가능합니다.');
+                    Alert.alert(
+                      '로그인 필요',
+                      '텍스트 입력은 로그인 후에 가능합니다.'
+                    );
                   }
                 }}
               />
               <View style={styles.buttonsContainer}>
-                <Button title="음성 녹음 시작" onPress={startRecording} disabled={isRecording} />
-                <Button title="음성 녹음 종료" onPress={stopRecording} disabled={!isRecording} />
+                <Button
+                  title="음성 녹음 시작"
+                  onPress={startRecording}
+                  disabled={isRecording}
+                />
+                <Button
+                  title="음성 녹음 종료"
+                  onPress={stopRecording}
+                  disabled={!isRecording}
+                />
                 <Button title="텍스트 읽기" onPress={speakText} />
                 <Button title="오디오 재생" onPress={playAudio} disabled={!soundUri} />
               </View>
@@ -206,12 +251,6 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
   textInput: {
     padding: 10,
     borderWidth: 1,
@@ -227,7 +266,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: 'gray',
     fontSize: 16,
-    fontFamily: 'KCC-Hanbit'
+    fontFamily: 'KCC-Hanbit',
   },
   loadingContainer: {
     flex: 1,
