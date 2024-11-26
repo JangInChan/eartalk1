@@ -200,6 +200,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   headerButtonText: {
+    fontFamily: 'KCC-Hanbit',
     color: 'white',
     fontWeight: 'bold',
   },
