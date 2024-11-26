@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   warningText: {
+    fontFamily: 'KCC-Hanbit',
     fontSize: 16,
     color: 'red',
     marginBottom: 20,
