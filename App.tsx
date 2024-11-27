@@ -62,7 +62,9 @@ const App = () => {
           name="Home"
           component={HomeScreen}
           options={({ navigation }) => ({
-            title: 'EarTalk',
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>EarTalk</Text>
+            ),
             headerLeft: () => null,
             headerRight: () => (
               <TouchableOpacity
@@ -192,6 +194,12 @@ const styles = StyleSheet.create({
     fontFamily: 'KCC-Hanbit',
     fontSize: 20,
     color: 'black',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    fontFamily: 'KCC-Hanbit',
+    color: '#333',
   },
   headerButton: {
     padding: 10,
