@@ -1,0 +1,32 @@
+{
+  "build": {
+    "production": {
+      "android": {
+        "image": "latest", 
+        "gradleCommand": ":app:bundleRelease",
+        "env": {
+          "EXPO_ANDROID_GRADLE_VERSION": "8.10.2"
+        },
+        "node": "18.18.0" 
+      },
+      "ios": {
+        "image": "latest",
+        "node": "18.18.0"
+      }
+    },
+    "development": {
+      "android": {
+        "image": "latest",
+        "gradleCommand": ":app:assembleDebug",
+        "env": {
+          "EXPO_ANDROID_GRADLE_VERSION": "8.10.2"
+        },
+        "node": "18.18.0"
+      },
+      "ios": {
+        "image": "latest",
+        "node": "18.18.0"
+      }
+    }
+  }
+}

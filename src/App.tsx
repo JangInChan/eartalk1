@@ -48,6 +48,18 @@ const App = () => {
     );
   }
 
+  const handleTextInputFocus = () => {
+    if (!isLoggedIn) {
+      Alert.alert('사용 불가', '로그인 후에 사용 가능합니다.');
+    }
+  };
+
+  const handleTextInputChange = (value: string) => {
+    if (!isLoggedIn) {
+      setText(value);
+    }
+  };
+
   const startRecording = async () => {
     try {
       setStatus('녹음 준비 중...');
@@ -110,11 +122,6 @@ const App = () => {
 
   const uploadAudio = async (uri: string) => {
     try {
-      if (!apiToken) {
-        Alert.alert('토큰 없음', '로그인 후 다시 시도해주세요.');
-        return;
-      }
-
       setStatus('파일 업로드 중...');
       const formData = new FormData();
 
@@ -128,7 +135,6 @@ const App = () => {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          Authorization: `Bearer ${apiToken}`,
           'Content-Type': 'multipart/form-data',
         },
         body: formData,
@@ -198,7 +204,7 @@ const App = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={{ flex: 1 }}
     >
-      <TouchableWithoutFeedback onPress={dismissKeyboard}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <TouchableOpacity style={styles.menuButton}>
             <MaterialIcons name="menu" size={30} color="black" />
@@ -207,13 +213,20 @@ const App = () => {
           <View style={styles.textInputContainer}>
             <TextInput
               value={text}
-              onChangeText={setText}
+              onChangeText={handleTextInputChange}
               placeholder="여기에 텍스트를 입력하세요"
               style={styles.textInput}
               editable={isLoggedIn}
               multiline
               textAlignVertical="top"
+              onFocus={handleTextInputFocus}
+              onTouchStart={() => {
+                if (!isLoggedIn) {
+                  Alert.alert('사용 불가', '로그인 후에 사용 가능합니다.');
+                }
+              }}
             />
+
             <View style={styles.actionButtons}>
               <TouchableOpacity
                 style={[styles.iconButton, styles.speakerButton]}
