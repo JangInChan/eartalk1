@@ -13,7 +13,6 @@ import DeleteAccountScreen from './src/screens/DeleteAccountScreen';
 import RecordingListScreen from './src/screens/RecordingListScreen';
 import UserInfoScreen from './src/screens/UserInfoScreen';
 
-// StackParamList 타입 정의
 type StackParamList = {
   Home: undefined;
   SignUp: undefined;
@@ -203,17 +202,17 @@ const styles = StyleSheet.create({
   },
   headerButton: {
     padding: 10,
-    backgroundColor: '#00C981',
+    backgroundColor: '#FFE400',
     borderRadius: 5,
     marginRight: 10,
   },
   headerButtonText: {
     fontFamily: 'KCC-Hanbit',
-    color: 'white',
+    color: 'black',
     fontWeight: 'bold',
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#FFE400',
     padding: 15,
     borderRadius: 5,
     marginVertical: 10,
@@ -222,7 +221,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontFamily: 'KCC-Hanbit',
-    color: 'white',
+    color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
   },
