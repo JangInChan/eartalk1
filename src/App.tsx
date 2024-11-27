@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { config } from './config';
 import { useFonts } from 'expo-font';
 import { MaterialIcons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import * as Clipboard from 'expo-clipboard';
 
 const App = () => {
   const [text, setText] = useState('');
@@ -178,8 +179,18 @@ const App = () => {
     Keyboard.dismiss();
   };
 
-  const copyText = () => {
-    Alert.alert('복사 완료', '텍스트가 복사되었습니다.');
+  const copyText = async () => {
+    if (text.trim()) {
+      try {
+        await Clipboard.setStringAsync(text);
+        Alert.alert('복사 완료', '텍스트가 클립보드에 복사되었습니다.');
+      } catch (error) {
+        console.error('텍스트 복사 실패:', error);
+        Alert.alert('복사 실패', '텍스트를 복사하는 도중 오류가 발생했습니다.');
+      }
+    } else {
+      Alert.alert('복사 실패', '복사할 텍스트가 없습니다.');
+    }
   };
 
   return (
@@ -189,12 +200,10 @@ const App = () => {
     >
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={styles.container}>
-          {/* 메뉴 버튼 */}
           <TouchableOpacity style={styles.menuButton}>
             <MaterialIcons name="menu" size={30} color="black" />
           </TouchableOpacity>
 
-          {/* 텍스트 입력 영역 */}
           <View style={styles.textInputContainer}>
             <TextInput
               value={text}
@@ -221,7 +230,6 @@ const App = () => {
             </View>
           </View>
 
-          {/* 녹음 버튼 영역 */}
           <View style={styles.recordingContainer}>
             <TouchableOpacity
               style={[
