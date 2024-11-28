@@ -18,6 +18,16 @@ const SignUpScreen = ({ navigation }: any) => {
   const sexOptions = ['남성', '여성'];
 
   const handleSignUp = async () => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@!%*#?&~\-\_^])[A-Za-z\d$@!%*#?&~\-\_^]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      Alert.alert(
+        '오류',
+        '비밀번호는 최소 8자, 하나의 문자, 하나의 숫자 및 하나의 특수 문자를 포함해야 합니다.'
+      );
+      return;
+    }
+    
     if (password !== verifyPassword) {
       Alert.alert('오류', '비밀번호가 일치하지 않습니다.');
       return;
