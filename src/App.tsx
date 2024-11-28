@@ -55,7 +55,7 @@ const App = () => {
   };
 
   const handleTextInputChange = (value: string) => {
-    if (!isLoggedIn) {
+    if (isLoggedIn) {
       setText(value);
     }
   };
