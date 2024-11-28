@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "eartalk",
     slug: "eartalk",
-    version: "1.0.0",
+    version: "1.0.1",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
@@ -16,7 +16,7 @@ export default {
     },
     ios: {
       bundleIdentifier: "com.chosun.eartalk",
-      buildNumber: "2",
+      buildNumber: "3",
       supportsTablet: true,
       infoPlist: {
         NSMicrophoneUsageDescription: "앱에서 마이크를 사용하여 음성 인식을 합니다.",
@@ -24,7 +24,7 @@ export default {
     },
     android: {
       package: "com.chosun.eartalk",
-      versionCode: 2,
+      versionCode: 3,
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
