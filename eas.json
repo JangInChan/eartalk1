@@ -27,6 +27,11 @@
         "image": "latest",
         "node": "18.18.0"
       }
+    },
+    "testflight": {
+      "ios": {
+        "distribution": "internal"
+      }
     }
   }
 }
