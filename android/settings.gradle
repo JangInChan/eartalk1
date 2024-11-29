@@ -1,38 +1,33 @@
 pluginManagement {
-    includeBuild(new File(["node", "--print", "require.resolve('@react-native/gradle-plugin/package.json')"].execute(null, rootDir).text.trim()).getParentFile().toString())
-}
-plugins { id("com.facebook.react.settings") }
+    includeBuild('../node_modules/@react-native/gradle-plugin')
 
-extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
-  if (System.getenv('EXPO_USE_COMMUNITY_AUTOLINKING') == '1') {
-    ex.autolinkLibrariesFromCommand()
-  } else {
-    def command = [
-      'node',
-      '--no-warnings',
-      '--eval',
-      'require(require.resolve(\'expo-modules-autolinking\', { paths: [require.resolve(\'expo/package.json\')] }))(process.argv.slice(1))',
-      'react-native-config',
-      '--json',
-      '--platform',
-      'android'
-    ].toList()
-    ex.autolinkLibrariesFromCommand(command)
-  }
+    repositories {
+        google()
+        mavenCentral()
+        maven { url("$rootDir/../node_modules/expo-splash-screen/android/maven") }
+        maven { url("$rootDir/../node_modules/expo-modules-core/android/maven") }
+    }
+}
+
+plugins {
+    id 'com.facebook.react' version '0.76.3' apply false
 }
 
 rootProject.name = 'eartalk'
 
 dependencyResolutionManagement {
-  versionCatalogs {
-    reactAndroidLibs {
-      from(files(new File(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim(), "../gradle/libs.versions.toml")))
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS) // Allow project repositories but prioritize settings.gradle
+    repositories {
+        google()
+        mavenCentral()
+        maven { url("$rootDir/../node_modules/expo-splash-screen/android/maven") }
+        maven { url("$rootDir/../node_modules/expo-modules-core/android/maven") }
     }
-  }
 }
 
-apply from: new File(["node", "--print", "require.resolve('expo/package.json')"].execute(null, rootDir).text.trim(), "../scripts/autolinking.gradle");
-useExpoModules()
-
-include ':app'
-includeBuild(new File(["node", "--print", "require.resolve('@react-native/gradle-plugin/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim()).getParentFile())
+// Expo 관련 모듈 추가
+include(":app")
+include(":expo-splash-screen")
+project(":expo-splash-screen").projectDir = new File(rootProject.projectDir, "../node_modules/expo-splash-screen/android")
+include(":expo-modules-core")
+project(":expo-modules-core").projectDir = new File(rootProject.projectDir, "../node_modules/expo-modules-core/android")

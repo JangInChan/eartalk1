@@ -1,0 +1,6 @@
+<resources>
+    <!-- Splash Screen Attributes -->
+    <attr name="windowSplashScreenBackground" format="reference|color" />
+    <attr name="windowSplashScreenAnimatedIcon" format="reference" />
+    <attr name="postSplashScreenTheme" format="reference" />
+</resources>
